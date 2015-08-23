@@ -19,7 +19,14 @@ perlunifaq.pod
 
 ### 大原則
 
-decodeして、encode
+decodeして、encodeする。
+
+    use Encode qw/encode decode/;
+    
+    my $str = shift @ARGV // "吉祥寺.pm";
+    my $decoded = decode("UTF-8", $str);
+    
+    say encode("UTF-8", $decoded) . ":length" . length($decoded);
 
 ## Encodeモジュール
 
