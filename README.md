@@ -202,6 +202,42 @@ flaggedなデータと、flaggedじゃないデータを連結すると、勝手
     
 どのPerlがどのUnicodeのバージョンに対応しているかは、perldeltaを参照。絵文字関連は要注意！
 
+#### サロゲートペア
+
+絵文字と言えばサロゲートペアですが、lengthなどはサロゲートペア含む文字列に関しても特に気にすることなく使えるようです。
+
+```perl
+use strict;
+use warnings;
+use Encode qw/encode/;
+
+use Devel::Peek;
+
+use utf8;
+
+my $str = '𠮷野家';
+
+print length $str,":",encode('UTF-8',$str),"\n";
+print encode('UTF-8',join(":",split //, $str)),"\n";
+
+Dump($str);
+```
+
+    3:𠮷野家
+    𠮷:野:家
+    SV = PVMG(0x7ffb5c832800) at 0x7ffb5c014e90
+      REFCNT = 1
+      FLAGS = (PADMY,SMG,POK,pPOK,UTF8)
+      IV = 0
+      NV = 0
+      PV = 0x7ffb5b509320 "\360\240\256\267\351\207\216\345\256\266"\0 [UTF8 "\x{20bb7}\x{91ce}\x{5bb6}"]
+      CUR = 10
+      LEN = 16
+      MAGIC = 0x7ffb5b502440
+        MG_VIRTUAL = &PL_vtbl_utf8
+        MG_TYPE = PERL_MAGIC_utf8(w)
+        MG_LEN = 3
+
 ### 標準入出力経由でデータをやりとりする
 
 同じPerlのプログラムの中でも、forkして他のPerlのプロセスの標準出力をトラップして、インプットにする様なプログラムを、ポータビリティの有る方法で実装するのは難しい。
